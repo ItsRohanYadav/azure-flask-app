@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Learnlytica Copilot Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .chat-container {
+      width: 400px;
+      height: 600px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #0078d4;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+    }
+    .message {
+      margin: 10px 0;
+      padding: 10px 15px;
+      border-radius: 20px;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+    .user-message {
+      background: #0078d4;
+      color: #fff;
+      margin-left: auto;
+    }
+    .bot-message {
+      background: #e9ecef;
+      color: #333;
+      margin-right: auto;
+    }
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    .chat-input input {
+      flex: 1;
+      border: none;
+      padding: 15px;
+      font-size: 14px;
+    }
+    .chat-input button {
+      background: #0078d4;
+      color: #fff;
+      border: none;
+      padding: 15px 20px;
+      cursor: pointer;
+    }
+    .chat-input input:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">Learnlytica Copilot</div>
+    <div class="chat-box" id="chatBox"></div>
+    <form id="chatForm" class="chat-input">
+      <input type="text" name="message" placeholder="Type your message..." required>
+      <button type="submit">➤</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById("chatForm");
+    const chatBox = document.getElementById("chatBox");
+
+    function addMessage(content, type) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", type === "user" ? "user-message" : "bot-message");
+      msg.textContent = content;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const userMessage = formData.get("message");
+      addMessage(userMessage, "user");
+      form.reset();
+
+      const response = await fetch("/chat", {
+        method: "POST",
+        body: formData
+      });
+      const text = await response.text();
+      addMessage(text, "bot");
+    });
+  </script>
+</body>
+</html>
